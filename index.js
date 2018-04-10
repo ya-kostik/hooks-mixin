@@ -88,7 +88,7 @@ function processHooksAsync(name) {
 module.exports = function HooksMixin(Class) {
   Class.prototype.hook = hook;
   Class.prototype.removeHook = removeHook;
-  Class.prototype.__processHooks = processHooks;
-  Class.prototype.__processHooksAsync = processHooksAsync;
+  Class.prototype.processHooks = processHooks;
+  Class.prototype.processHooksAsync = processHooksAsync;
   return Class;
 };

@@ -11,8 +11,8 @@ test('Add hooks ability to Class', () => {
   const instance = mockClassInstance();
   expect(instance).toHaveProperty('hook');
   expect(instance).toHaveProperty('removeHook');
-  expect(instance).toHaveProperty('__processHooks');
-  expect(instance).toHaveProperty('__processHooksAsync');
+  expect(instance).toHaveProperty('processHooks');
+  expect(instance).toHaveProperty('processHooksAsync');
   expect(instance).not.toHaveProperty('__hooks');
   instance.hook('test', () => {});
   expect(instance).toHaveProperty('__hooks');
@@ -25,7 +25,7 @@ test('Call hooks', () => {
   const mockHook = jest.fn();
   instance.hook('test', mockHook);
   instance.hook('test', mockHook);
-  instance.__processHooks('test');
+  instance.processHooks('test');
   expect(mockHook).toHaveBeenCalledTimes(2);
 });
 
@@ -39,7 +39,7 @@ test('Call hooks with arguments', () => {
     expect(self).toBe(instance);
     called = true;
   });
-  instance.__processHooks('test', 1, 2, 3);
+  instance.processHooks('test', 1, 2, 3);
   expect(called).toBe(true);
 });
 
@@ -50,7 +50,7 @@ test('Call hooks without arguments', () => {
     expect(self).toBe(instance);
     called = true;
   });
-  instance.__processHooks('test');
+  instance.processHooks('test');
   expect(called).toBe(true);
 });
 
@@ -85,7 +85,7 @@ test('Async hooks call', async () => {
     instance.hook('test', hook);
   }
   instance.test = async function() {
-    await this.__processHooksAsync('test');
+    await this.processHooksAsync('test');
     expect(called).toBe(TIMES);
     done = true;
   }
