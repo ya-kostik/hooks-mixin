@@ -63,3 +63,7 @@ instance.removeHook('pre-save', preSaveHookFunction);
 instance.save();
 // no “=)”
 ```
+
+## Frontend
+
+Just `import` or `require` from `build/index.js`.

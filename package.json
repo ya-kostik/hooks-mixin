@@ -7,11 +7,21 @@
   "author": "Constantin Tsukanov <c@indotech.ru>",
   "license": "MIT",
   "private": false,
+  "files": [
+    "index.js",
+    "build/index.js"
+  ],
   "scripts": {
-    "test": "jest"
+    "build": "NODE_ENV=production ./node_modules/babel-cli/bin/babel.js index.js -d build/",
+    "test": "jest",
+    "tarball": "tarball=\"$(npm pack .)\"; wc -c \"${tarball}\"; tar tvf \"${tarball}\"; rm \"${tarball}\";",
+    "prepublishOnly": "yarn build && yarn tarball"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-minify": "^0.4.0",
     "eslint": "^4.15.0",
     "jest": "^22.4.3"
   }
