@@ -1,15 +1,10 @@
 module.exports = {
   verbose: true,
+  browser: false,
+  transform: {},
   collectCoverage: true,
   collectCoverageFrom: [
-    'lib/**/*.js',
-    '!**/node_modules/**',
-    '!**/vendor/**',
-    '!**/coverage/**',
-    '!lib/helpers/kindOf.js',
-    '!lib/helpers/isPrimitive.js',
-    '!lib/helpers/assignDeep.js',
-    '!lib/helpers/assignSymbols.js',
+    'index.js',
   ],
   globals: {
 

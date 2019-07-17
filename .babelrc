@@ -1,6 +1,6 @@
 {
   "presets": [
-    ["env", {
+    ["@babel/preset-env", {
       "targets": {
         "browsers": ["last 5 versions", "safari >= 7", "ie >= 9"]
       }
@@ -8,6 +8,7 @@
   ],
   "env": {
     "production": {
+      "comments": false,
       "presets": [
         "babel-preset-minify"
       ]
