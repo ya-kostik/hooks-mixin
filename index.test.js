@@ -92,3 +92,75 @@ test('Async hooks call', async () => {
   await instance.test();
   expect(done).toBe(true);
 });
+
+test('Add hooks bulk', () => {
+  const instance = mockClassInstance();
+
+  const [hook1, hook2, hook3] = [jest.fn(), jest.fn(), jest.fn()];
+  instance.hooks({
+    a: [hook1, hook2],
+    b: hook3
+  });
+
+  instance.test = function() {
+    this.processHooks('a');
+    this.processHooks('b');
+  }
+  instance.test();
+
+  for (const hook of [hook1, hook2, hook3]) {
+    expect(hook).toBeCalled();
+  }
+});
+
+test('Remove hooks bulk', () => {
+  const instance = mockClassInstance();
+
+  const [hook1, hook2, hook3, hook4] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()];
+  instance.hooks({
+    a: [hook1, hook2],
+    b: hook3,
+    c: hook4
+  });
+
+  instance.removeHooks({ b: hook3, c: hook4 });
+
+  instance.test = function() {
+    this.processHooks('a');
+    this.processHooks('b');
+    this.processHooks('c');
+  }
+  instance.test();
+
+  for (const hook of [hook1, hook2]) {
+    expect(hook).toBeCalled();
+  }
+
+  for (const hook of [hook3, hook4]) {
+    expect(hook).not.toBeCalled();
+  }
+});
+
+test('Remove all hooks', () => {
+  const instance = mockClassInstance();
+
+  const [hook1, hook2, hook3, hook4] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()];
+  instance.hooks({
+    a: [hook1, hook2],
+    b: hook3,
+    c: hook4
+  });
+
+  instance.removeHooks();
+
+  instance.test = function() {
+    this.processHooks('a');
+    this.processHooks('b');
+    this.processHooks('c');
+  }
+  instance.test();
+
+  for (const hook of [hook1, hook2, hook3, hook4]) {
+    expect(hook).not.toBeCalled();
+  }
+});

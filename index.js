@@ -1,5 +1,16 @@
+function bulkHooksRead(hooks, cb) {
+  for (const [name, fn] of Object.entries(hooks)) {
+    if (Array.isArray(fn)) {
+      fn.forEach((fn) => cb(name, fn));
+    } else {
+      cb(name, fn);
+    }
+  }
+}
+
 /**
  * Add hook to Class
+ *
  * @param  {String}   name hook's name
  * @param  {Function} fn   hook's callback
  */
@@ -16,7 +27,17 @@ function hook(name, fn) {
 }
 
 /**
-* get hooks of context
+ * Add group of hooks to Class
+ *
+ * @param  {Object} hooks key of object is the hook's name, value is the hook's callback or array of callbacks
+ */
+function hooks(hooks) {
+  bulkHooksRead(hooks, (name, fn) => this.hook(name, fn));
+}
+
+/**
+* Get hooks of context
+*
 * @param  {Object} context
 * @param  {String} name hook's name
 * @return {Array}  array of hook's callbacks
@@ -27,7 +48,8 @@ function getHooks(context, name) {
 }
 
 /**
-* remove hook by name and callback
+* Remove hook by name and callback
+*
 * @param  {String}   name hook's name
 * @param  {Function} fn   hook's callback
 * @return {Function|null} hook's callback or null, if hook not found
@@ -42,7 +64,25 @@ function removeHook(name, fn) {
 }
 
 /**
- * get hook arguments
+ * Remove group of hooks from Class
+ *
+ * @param  {Object} hooks key of object is the hook's name, value is the hook's callback or array of callbacks
+ */
+function removeHooks(hooks) {
+  if (!hooks) {
+    this.__hooks = null;
+  } else {
+    bulkHooksRead(
+      hooks,
+      (name, fn) => this.removeHook(name, fn)
+    );
+  }
+
+}
+
+/**
+ * Get hook arguments
+ *
  * @param  {Object} context
  * @param  {Object} arguments
  * @return {Array}  next arguments
@@ -55,8 +95,9 @@ function getHookArguments(context, argsIn) {
 }
 
 /**
- * process hooks by name
- * @param  {String}   name hook's name
+ * Process hooks by name
+ *
+ * @param  {String} name hook's name
  */
 function processHooks(name) {
   const hooks = getHooks(this, name);
@@ -68,8 +109,10 @@ function processHooks(name) {
 }
 
 /**
- * process hooks by name (“parallel” with Promise.all)
- * @param  {String} name
+ * Process hooks by name (“parallel” with Promise.all)
+ *
+ * @async
+ * @param {String} name
  * @return {Promise}
  */
 function processHooksAsync(name) {
@@ -83,11 +126,14 @@ function processHooksAsync(name) {
 
 /**
  * Apply hooks' methods to Class
- * @param       {Function} Class constructor
+ *
+ * @param {Function} Class constructor
  */
 module.exports = function HooksMixin(Class) {
   Class.prototype.hook = hook;
+  Class.prototype.hooks = hooks;
   Class.prototype.removeHook = removeHook;
+  Class.prototype.removeHooks = removeHooks;
   Class.prototype.processHooks = processHooks;
   Class.prototype.processHooksAsync = processHooksAsync;
   return Class;
